@@ -1,4 +1,4 @@
-package exercise.section3;
+package exercise.char3.section1;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -6,6 +6,7 @@ import java.util.Queue;
 
 /**
  * OrderedSequentialSearchST
+ * 有序链表
  *
  * @param <Key>
  * @param <Val>
@@ -48,28 +49,46 @@ public class Exercise3<Key extends Comparable<Key>, Val> {
         }
 
         //check the other nodes
-        for (Node node = head; node != null; node = node.next) {
-            //中间某个点比自己大
-            if (node.next != null) {
-                if (node.next.key.compareTo(key) == 0) {
-                    node.next.val = val;
-                    return;
-                } else if (node.next.key.compareTo(key) > 0) {
-                    //插入到两个点中间
-                    Node newNode = new Node(key, val, node.next);
-                    node.next = newNode;
-                    size++;
-                    return;
-                }
-            } else {
-                //找不到比自己大的，接在最后
-                Node newNode = new Node(key, val, null);
-                head.next = newNode;
+        //Ans1.
+//        for (Node node = head; node != null; node = node.next) {
+//            //中间某个点比自己大
+//            if (node.next != null) {
+//                if (node.next.key.compareTo(key) == 0) {
+//                    node.next.val = val;
+//                    return;
+//                } else if (node.next.key.compareTo(key) > 0) {
+//                    //插入到两个点中间
+//                    Node newNode = new Node(key, val, node.next);
+//                    node.next = newNode;
+//                    size++;
+//                    return;
+//                }
+//            } else {
+//                //找不到比自己大的，接在最后
+//                Node newNode = new Node(key, val, null);
+//                node.next = newNode;
+//                size++;
+//                return;
+//            }
+//        }
+
+        //Ans2.
+        Node node = head;
+        while (node.next != null) {
+            if (node.next.key.compareTo(key) == 0) {
+                node.next.val = val;
+                return;
+            } else if (node.next.key.compareTo(key) > 0) {
+                Node newNode = new Node(key, val, node.next);
+                node.next = newNode;
                 size++;
                 return;
             }
+            node = node.next;
         }
-
+        //node.next == null
+        node.next = new Node(key, val, null);
+        size++;
     }
 
     public Val get(Key key) {

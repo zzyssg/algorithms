@@ -1,4 +1,4 @@
-package exercise.section3;
+package exercise.char3.section1;
 
 public interface IOrderedSequentialSearchST<Key extends Comparable<Key>,Val> {
 
