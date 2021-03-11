@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
+ * 递归版 put、get、min、max、floor、ceiling、rank、select 8种方法
  * @author ZZY
  * @date 2021/3/10 9:45
  */
@@ -50,6 +51,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         }
     }
 
+    //递归版get
     private Value get(Node root, Key key) {
         if (root == null) {
             return null;
@@ -63,6 +65,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         }
     }
 
+    //递归版put
     public void put(Key key, Value value) {
         check(key);
         root = put(root, key, value);
@@ -94,6 +97,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         return max(root).key;
     }
 
+    //递归版 max
     private Node max(Node root) {
         //exit
         if (root == null) {
@@ -105,6 +109,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         return max(root.right);
     }
 
+    //递归版 min
     public Key min() {
         return min(root).key;
     }
@@ -119,6 +124,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         return min(root.left);
     }
 
+    //递归版floor
     //小于等于key的最大值 —— 向下取整
     public Key floor(Key key) {
         check(key);
@@ -145,6 +151,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         }
     }
 
+    //递归版 ceiling
     //大于等于key的最小值 -- 向上取整
     public Key ceiling(Key key) {
         check(key);
@@ -259,8 +266,10 @@ public class BST<Key extends Comparable<Key>, Value> {
     private Node deleteMin(Node root) {
         //exit
         if (root.left == null) {
+            //返回比删除点大的点
             return root.right;
         }
+        //删除 —— 将引用指向删除点的右节点(此节点比删除的节点大，且最接近)
         root.left = deleteMin(root.left);
         root.N = size(root.left) + size(root.right) + 1;
         //更新后的root
@@ -301,9 +310,20 @@ public class BST<Key extends Comparable<Key>, Value> {
     }
 
     public void deleteMax() {
-
+        root = deleteMax(root);
     }
 
+    private Node deleteMax(Node root) {
+        if (root.right == null) {
+            //返回比删除节点小的点
+            return root.left;
+        }
+        root.right =  deleteMax(root.right);
+        //记得N
+        root.N = size(root.left) + size(root.right) + 1;
+        return root;
+
+    }
 
 
     //算法3.3(续5)
