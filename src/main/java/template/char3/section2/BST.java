@@ -88,7 +88,7 @@ public class BST<Key extends Comparable<Key>, Value> {
             root.value = value;
         }
         //更新节点个数N
-        root.N = root.left.N + root.right.N + 1;
+        root.N = size(root.left) + size(root.right) + 1;
         return root;
     }
 
