@@ -13,12 +13,12 @@ public class Exercise1<Key extends Comparable<Key>, Value> {
     private static boolean BLACK = false;
 
     private class Node {
-        private Key key;
-        private Value value;
-        private Node left;
-        private Node right;
-        private int N;
-        private boolean color;
+        Key key;
+        Value value;
+         Node left;
+         Node right;
+         int N;
+         boolean color;
 
         public Node(Key key, Value value, int n, boolean color) {
             this.key = key;
@@ -81,6 +81,9 @@ public class Exercise1<Key extends Comparable<Key>, Value> {
         x.N = h.N;
         h.N = size(h.left) + size(h.right) + 1;
         return x;
+
+
+
     }
 
     //右链接为红 —— 左旋
@@ -105,7 +108,7 @@ public class Exercise1<Key extends Comparable<Key>, Value> {
     }
 
     private int size(Node h) {
-        if (h == root) {
+        if (h == null) {
             return 0;
         }
         return size(h.left) + size(h.right) + 1;
