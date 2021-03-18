@@ -1,7 +1,5 @@
 package template.char3.section3;
 
-import java.util.HashMap;
-
 /**
  * @author ZZY
  * @date 2021/3/15 14:03
@@ -79,9 +77,9 @@ public class RedBlackBST<Key extends Comparable<Key>,Value> {
 
     //3.3. 左子节点为红色，且右子节点为红色，flipColor —— 将红链接向上传递
     private void flipColor(Node h) {
-        h.left.color = BLACK;
-        h.right.color = BLACK;
-        h.color = RED;
+        h.color = !h.color;
+        h.left.color = !h.left.color;
+        h.right.color = !h.right.color;
     }
 
     private int size(Node h) {
@@ -131,6 +129,101 @@ public class RedBlackBST<Key extends Comparable<Key>,Value> {
         root.N = size(root.left) + size(root.right) + 1;
 
         return root;
+    }
+
+    public void deleteMin() {
+        if (root == null) {
+            return;
+        }
+        root = deleteMin(root);
+    }
+
+    //此方法执行删除最小键操作
+    private Node deleteMin(Node root) {
+        //root是最小的点，return null即删除，使得父节点的leftNode为null
+        if (root.left == null) {
+            return null;
+        }
+        //root不是最小的点，检验root.left
+        //root.left != RED  && root.left.left != RED 说明 root.left 是一个 2-节点，不能直接删除，需要将 [ 其 ] 转为3-节点
+        if (!isRED(root.left) && !isRED(root.left.left)) {
+            root = moveRedLeft(root);
+        }
+        root.left = deleteMin(root.left);
+        return balance(root);
+    }
+
+    private Node balance(Node root) {
+        if (isRED(root.right) && !isRED(root.left)) {
+            root = rotateLeft(root);
+        }
+        if (isRED(root.left) && isRED(root.left.left)) {
+            root = rotateRight(root);
+        }
+        if (isRED(root.left) && isRED(root.right)) {
+            flipColor(root);
+        }
+        return root;
+    }
+
+    //将左子节点变为3-节点
+    private Node moveRedLeft(Node root) {
+        //换色
+        moveFlipColors(root);
+        //判断[左节点的兄弟节点]是不是3-节点
+        //如果是三节点，接一个过来 ： 实现形式【旋转】 —— 先右旋，再左旋
+        if (isRED(root.right.left)) {
+            root.right = rotateRight(root.right);
+            root = rotateLeft(root);
+        }
+        return root;
+    }
+
+    //补全三条链接的颜色 父节点为BLACK,子节点为RED
+    private void moveFlipColors(Node root) {
+        root.color = BLACK;
+        root.left.color = RED;
+        root.right.color = RED;
+    }
+
+    public void deleteMax() {
+        //假如根节点是2-节点
+        if (!isRED(root.left) && !isRED(root.right)) {
+            //TODO 先处理成红色 why？父节点的颜色为RED，可以解决什么?
+            root.color = RED;
+        }
+        root = deleteMax(root);
+        //根节点的颜色为黑色
+        if (!isEmpty()) {
+            root.color = BLACK;
+        }
+    }
+
+    private Node deleteMax(Node root) {
+        if (isRED(root.left)) {
+            root = rotateRight(root);
+        }
+        if (root.right == null) {
+            return null;
+        }
+        if (!isRED(root.right) && !isRED(root.right.left)) {
+            root = moveRedRight(root);
+        }
+        root.right = deleteMax(root.right);
+        return balance(root);
+    }
+
+    private Node moveRedRight(Node root) {
+        flipColor(root);
+        if (isRED(root.left.left)) {
+            rotateRight(root);
+            flipColor(root);
+        }
+        return root;
+    }
+
+    private boolean isEmpty() {
+        return root == null;
     }
 
 
