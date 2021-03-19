@@ -1,6 +1,8 @@
 package template.char3.section3;
 
 /**
+ * 关键：deleteMin(Node h) 和 deleteMax(Node h) 的参数均为3-节点或者4-节点，才能进行return null即删除操作；如果不是3-节点或者4-节点，需将节点变为3、4节点。
+ * 实现时，将h.left（deleteMin）或者h.right（deleteMax）变为3.4节点
  * @author ZZY
  * @date 2021/3/15 14:03
  */
@@ -132,99 +134,177 @@ public class RedBlackBST<Key extends Comparable<Key>,Value> {
     }
 
     public void deleteMin() {
-        if (root == null) {
-            return;
-        }
-        root = deleteMin(root);
-    }
-
-    //此方法执行删除最小键操作
-    private Node deleteMin(Node root) {
-        //root是最小的点，return null即删除，使得父节点的leftNode为null
-        if (root.left == null) {
-            return null;
-        }
-        //root不是最小的点，检验root.left
-        //root.left != RED  && root.left.left != RED 说明 root.left 是一个 2-节点，不能直接删除，需要将 [ 其 ] 转为3-节点
-        if (!isRED(root.left) && !isRED(root.left.left)) {
-            root = moveRedLeft(root);
-        }
-        root.left = deleteMin(root.left);
-        return balance(root);
-    }
-
-    private Node balance(Node root) {
-        if (isRED(root.right) && !isRED(root.left)) {
-            root = rotateLeft(root);
-        }
-        if (isRED(root.left) && isRED(root.left.left)) {
-            root = rotateRight(root);
-        }
-        if (isRED(root.left) && isRED(root.right)) {
-            flipColor(root);
-        }
-        return root;
-    }
-
-    //将左子节点变为3-节点
-    private Node moveRedLeft(Node root) {
-        //换色
-        moveFlipColors(root);
-        //判断[左节点的兄弟节点]是不是3-节点
-        //如果是三节点，接一个过来 ： 实现形式【旋转】 —— 先右旋，再左旋
-        if (isRED(root.right.left)) {
-            root.right = rotateRight(root.right);
-            root = rotateLeft(root);
-        }
-        return root;
-    }
-
-    //补全三条链接的颜色 父节点为BLACK,子节点为RED
-    private void moveFlipColors(Node root) {
-        root.color = BLACK;
-        root.left.color = RED;
-        root.right.color = RED;
-    }
-
-    public void deleteMax() {
-        //假如根节点是2-节点
         if (!isRED(root.left) && !isRED(root.right)) {
-            //TODO 先处理成红色 why？父节点的颜色为RED，可以解决什么?
             root.color = RED;
         }
-        root = deleteMax(root);
-        //根节点的颜色为黑色
+        //参数均为3-节点或者4-节点
+        root = deleteMin(root);
         if (!isEmpty()) {
             root.color = BLACK;
         }
     }
 
-    private Node deleteMax(Node root) {
-        if (isRED(root.left)) {
-            root = rotateRight(root);
-        }
-        if (root.right == null) {
+    //删除h下的最小节点，返回根节点
+    private Node deleteMin(Node h) {
+        if (h.left == null) {
             return null;
         }
-        if (!isRED(root.right) && !isRED(root.right.left)) {
-            root = moveRedRight(root);
+        //判断下一个节点是不是2-节点 ,不是2-节点直接删除操作，否则 1.向兄弟节点借 2.与兄弟节点和父节点组成4-节点
+        if (!isRED(h.left) && !isRED(h.left.left)) {
+            h = moveRedLeft(h);
         }
-        root.right = deleteMax(root.right);
-        return balance(root);
+        h.left = deleteMin(h.left);
+        return balance(h);
     }
 
-    private Node moveRedRight(Node root) {
-        flipColor(root);
-        if (isRED(root.left.left)) {
-            rotateRight(root);
-            flipColor(root);
+    private Node moveRedLeft(Node h) {
+        flipColor(h);
+        if (isRED(h.right.left)) {
+            h.right = rotateRight(h.right);
+            h = rotateLeft(h);
+            flipColor(h);
         }
-        return root;
+        return h;
+    }
+
+    private Node balance(Node h) {
+        if (isRED(h.right) && !isRED(h.left)) {
+            h = rotateLeft(h);
+        }
+        if (isRED(h.left) && isRED(h.left.left)) {
+            h = rotateRight(h);
+        }
+        if (isRED(h.left) && isRED(h.right)) {
+            flipColor(h);
+        }
+        return h;
+    }
+
+    //删除最大
+    public void deleteMax() {
+        if (!isRED(root.left) && !isRED(root.right)) {
+            root.color = RED;
+        }
+        root = deleteMax(root);
+        if (!isEmpty()) {
+            root.color = BLACK;
+        }
+    }
+
+    //删除root节点下的最大值后，返回root节点
+    private Node deleteMax(Node h) {
+        //判断左子节点是不是红节点
+        if (isRED(h.left)) {
+            h = rotateRight(h);
+        }
+        if (h.right == null) {
+            return null;
+        }
+        //若满足判断1 : if(isRed(h.left))成立，则本次判断为假
+        if (!isRED(h.right) && !isRED(h.right.left)) {
+            h = moveRedRight(h);
+        }
+        h.right = deleteMax(h.right);
+        return balance(h);
+    }
+
+    //借节点至h
+    private Node moveRedRight(Node h) {
+        //染色
+        flipColor(h);
+        //是否有5-节点生成
+        if (isRED(h.left.left)) {
+            h = rotateRight(h);
+            flipColor(h);
+        }
+        return balance(h);
+    }
+
+    //删除任意节点
+    public void delete(Key key) {
+        if (!contains(key)) {
+            return;
+        }
+        if (!isRED(root.left) && !isRED(root.right)) {
+            root.color = RED;
+        }
+        root = delete(root, key);
+        if (!isEmpty()) {
+            root.color = BLACK;
+        }
+    }
+
+    //delete(Node h)的h必须是3、4节点，是2-节点的话首先将其变为3、4节点
+    private Node delete(Node h, Key key) {
+        //TODO ?
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) {
+            //在左子树
+            if (!isRED(h.left) && !isRED(h.left.left)) {
+                h = moveRedLeft(h);
+            }
+            h.left = delete(h.left, key);
+        } else {
+            //根节点或者右子树
+
+            //预处理
+            //删除操作
+            if (key.compareTo(h.key) == 0) {
+                //将后继节点(其余节点的最小值)覆盖到此节点
+                h.key = min(h.right);
+                h.value = get(h.right, h.key).value;
+                h.right = deleteMin(h.right);
+            } else {
+                //delete --> deleteMin
+                h.right = delete(h.right, key);
+            }
+        }
+        return h;
+    }
+
+    private Node get(Node h, Key key) {
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) {
+            return get(h.left, key);
+        } else if (cmp > 0) {
+            return get(h.right, key);
+        } else {
+            return h;
+        }
+    }
+
+    private Key min(Node h) {
+        if (h == null) {
+            return null;
+        }
+        Node x = h;
+        while (x.left != null) {
+            x = x.left;
+        }
+        return x.key;
+    }
+
+    public boolean contains(Key key) {
+        return contains(root, key);
+
+    }
+
+    private boolean contains(Node h, Key key) {
+        if (h == null) {
+            return false;
+        }
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) {
+            return contains(h.left, key);
+        } else if (cmp > 0) {
+            return contains(h.right, key);
+        } else {
+            return true;
+        }
     }
 
     private boolean isEmpty() {
         return root == null;
     }
-
 
 }
