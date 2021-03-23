@@ -2,7 +2,14 @@ package template.char3.setion4;
 
 import template.char3.section1.SequentialSearchST;
 
+import java.security.SecurityPermission;
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
+ * HashTable 由 3.1节的无序列表实现
+ * 核心 ： resize()
+ * 注意 ： put和delete时注意 n
  * @author ZZY
  * @date 2021/3/22 17:05
  */
@@ -29,15 +36,24 @@ public class SeparateChainingHashST<Key extends Comparable<Key>, Value> {
      * @param m
      */
     public SeparateChainingHashST(int m) {
-        this.m = m;
         st = new SequentialSearchST[m];
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             st[i] = new SequentialSearchST<>();
         }
     }
 
+    /**
+     * resize 的是 哪个？
+     * @param chains
+     */
     private void resize(int chains) {
-
+        SeparateChainingHashST<Key,Value> newST = new SeparateChainingHashST<>(chains);
+        for (Key key : keys()) {
+            newST.put(key, get(key));
+        }
+        this.n = newST.n;
+        this.m = newST.m;
+        this.st = newST.st;
     }
 
     private int hashTextbook(Key key) {
@@ -48,31 +64,76 @@ public class SeparateChainingHashST<Key extends Comparable<Key>, Value> {
 
     }
 
+    //返回键值对的数目
     private int size() {
-
+        return n;
     }
 
+
+    //TODO 能利用类内的函数即用，少用成员变量
     private boolean isEmpty() {
+        return size() == 0;
+    }
+
+    private boolean contains(Key key) {
+        checkKey(key);
+        return get(key) != null;
+    }
+
+    private void checkKey(Key key) {
+        if (key == null) {
+            throw new IllegalArgumentException("argument is illegal.");
+        }
+    }
+
+    public Value get(Key key) {
+        checkKey(key);
+        int i = hash(key);
+        //st[i] 是一个 无序数组实现的二叉树，是一个对象。
+        return st[i].get(key);
 
     }
 
-    private boolean contains() {
-
+    //value 为null
+    //！contains
+    public void put(Key key, Value value) {
+        if (key == null) {
+            throw new IllegalArgumentException("argument key is null.");
+        }
+        //execute delete
+        if (value == null) {
+            delete(key);
+        }
+        int i = hash(key);
+        if (!contains(key)) {
+            n++;
+        }
+        st[i].put(key, value);
+        if (size() >= m / 2) {
+            resize(2 * m);
+        }
     }
 
-    private Value get() {
-
-    }
-
-    private void put(Key key, Value value) {
-
-    }
-
-    private void delete() {
-
+    private void delete(Key key) {
+        checkKey(key);
+        if (!contains(key)) {
+            return;
+        }
+        int i = hash(key);
+        st[i].delete(key);
+        n--;
+        if (size() < m / 2) {
+            resize(m / 2);
+        }
     }
 
     private Iterable<Key> keys() {
-
+        Queue<Key> keys = new LinkedList<>();
+        for (int i = 0; i < m; i++) {
+            for (Key key : st[i].keys()) {
+                keys.add(key);
+            }
+        }
+        return keys;
     }
 }
