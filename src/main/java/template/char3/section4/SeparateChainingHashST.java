@@ -2,7 +2,6 @@ package template.char3.setion4;
 
 import template.char3.section1.SequentialSearchST;
 
-import java.security.SecurityPermission;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -57,10 +56,15 @@ public class SeparateChainingHashST<Key extends Comparable<Key>, Value> {
     }
 
     private int hashTextbook(Key key) {
-
+        return (key.hashCode() & (0x7fffffff)) % m;
     }
 
+    //TODO h 需要多次计算
     private int hash(Key key) {
+        int h = key.hashCode();
+        h =  (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
+        return h & (m - 1);
+
 
     }
 
@@ -91,7 +95,6 @@ public class SeparateChainingHashST<Key extends Comparable<Key>, Value> {
         int i = hash(key);
         //st[i] 是一个 无序数组实现的二叉树，是一个对象。
         return st[i].get(key);
-
     }
 
     //value 为null
