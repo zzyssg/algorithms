@@ -7,112 +7,175 @@ import java.util.Queue;
 /**
  * @author ZZY
  * @date 2021/3/9 15:18
- * 无序链表
+ * 基于无序链表 —— key无需extend Compareble
+ * 方法总结：delete较难，put置于头结点
  */
-public class SequentialSearchST<Key extends Comparable<Key>, Value> {
+public class SequentialSearchST<Key, Value> {
+    //符号表的首节点
     private Node first;
-    private int size;
+    //符号表中的键值对的数目
+    private int N;
 
-    class Node {
+    class Node{
         Key key;
-        Value val;
+        Value value;
         Node next;
 
-        public Node(Key key, Value val, Node next) {
+        public Node() {
+        }
+
+        public Node(Key key, Value value, Node next) {
             this.key = key;
-            this.val = val;
+            this.value = value;
             this.next = next;
         }
     }
 
-    public Value get(Key key) {
-        //check exception
-        check(key);
-        for (Node node = first; node != null; node = node.next) {
-            if (node.key.compareTo(key) == 0) {
-                return node.val;
+    /**
+     * 将键值对插入表中，若值为空则将key从表中删除
+     * @param key 键
+     * @param value 值
+     * time: O(N),同delete()
+     */
+    public void put(Key key, Value value) {
+        if (key == null) {
+            throw new IllegalArgumentException("argument key is illegal.");
+        }
+        if (value == null) {
+            delete(key);
+        }
+        //注意 已经存在，则覆盖
+        Node tem = first;
+        while (tem != null) {
+            if (key.equals(tem.key)) {
+                tem.value = value;
+                //return
+                return;
             }
+            tem = tem.next;
+        }
+
+        //插入到头结点
+        first = new Node(key, value, first);
+        N++;
+    }
+
+    /**
+     * 返回key对应的 value
+     * 若key不存在，则返回null
+     * time: O(N)
+     * @param key
+     * @return
+     */
+    public Value get(Key key) {
+        Node head = first;
+        while (head != null) {
+            if (key.equals(head.key)) {
+                return head.value;
+            }
+            head = head.next;
         }
         return null;
     }
 
-    public void put(Key key, Value value) {
-        check(key);
-
-        //check the other nodes
-        for (Node node = first; node != null; node = node.next) {
-            if (node.key.compareTo(key) == 0) {
-                node.val = value;
-                return;
-            }
-        }
-        Node newNode = new Node(key, value, first);
-        first = newNode;
-        size++;
-        return;
-    }
-
-    public int size() {
-        return size;
-    }
-
+    /**
+     * 从表中删除key以及对应的value
+     * time: O(N)
+     *
+     * @param key
+     */
+//    非递归版
+//    public void delete(Key key) {
+//        //两个节点，记录pre和cur
+//        Node curNode = first;
+//        Node preNode = new Node();
+//        preNode.next = curNode;
+//        while (curNode != null) {
+//            if (key.equals(curNode.key)) {
+//                break;
+//            }
+//            preNode = curNode;
+//            curNode = curNode.next;
+//        }
+//        //已找到keyNode，删除
+//        preNode.next = curNode.next;
+//        curNode = null;
+//        first = preNode.next;
+//        N--;
+//    }
     public void delete(Key key) {
-        check(key);
-        if(isEmpty()) {
-            throw new NoSuchElementException("no element to delete.");
-        }
-        //check first node
-        if (first.key.compareTo(key) == 0) {
-            first = first.next;
-            size--;
-            return;
-        }
-        //比价node.next之前，node已经确定不满足要求
-        for (Node node = first; node.next != null; node = node.next) {
-            if (node.next.key.compareTo(key) == 0) {
-                node.next = node.next.next;
-                size--;
-                return;
-            }
-        }
+        first = delete(first, key);
     }
 
-
-    private void check(Key key) {
-        if (key == null) {
-            throw new IllegalArgumentException("argument is illegal.");
+    /**
+     * 删除head中的节点后，返回链表首节点
+     * @param head 当前节点
+     * @param key 键
+     * @return 删除目标键后的链接
+     */
+    private Node delete(Node head, Key key) {
+        if (head == null) {
+            return null;
         }
-    }
-
-    //[lo...hi]之间的key
-    public Iterable<Key> keys(Key lo, Key hi) {
-        check(lo);
-        check(hi);
-
-        Queue<Key> queue = new LinkedList<>();
-        for (Node node = first; node != null; node = node.next) {
-            if (inRange(node.key, lo, hi)) {
-                queue.add(node.key);
-            }
+        if (key.equals(head.key)) {
+            N--;
+            return head.next;
         }
-        return queue;
+        head.next = delete(head.next, key);
+        return head;
     }
 
-    private boolean inRange(Key key, Key lo, Key hi) {
-        return key.compareTo(lo) >= 0 && key.compareTo(hi) <= 0;
+    /**
+     * 表中是否包含key
+     * time : O(N) __ 借用get(),同为O(N)
+     * @param key
+     * @return
+     */
+    public boolean contains(Key key) {
+//        错误版本
+//        Node head = first;
+//        while (head != null) {
+//            if (key.equals(head.key)) {
+//                return true;
+//            }
+//            head = head.next;
+//        }
+//        return false;
+        return get(key) != null;
     }
 
+    /**
+     * 返回表中的键值对的数量
+     * @return
+     */
+    public int size(){
+        return this.N;
+    }
+
+    /**
+     * 表是否为空
+     * @return
+     */
+    public boolean isEmpty(){
+        return size() == 0;
+    }
+
+    /**
+     * 表中所有键的集合
+     * time: O(N)
+     * @return
+     */
     public Iterable<Key> keys() {
-        Queue<Key> queue = new LinkedList<>();
-        for (Node node = first; node != null; node = node.next) {
-                queue.add(node.key);
+        Node head = first;
+        Queue<Key> keys = new LinkedList<>();
+        while (head != null) {
+            keys.add(head.key);
+            head = head.next;
         }
-        return queue;
+        return keys;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
+
 
 
 }
