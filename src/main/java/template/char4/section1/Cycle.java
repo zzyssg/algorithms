@@ -24,12 +24,13 @@ public class Cycle {
             if (!marked[w]) {
                 dfs(G, w, v);
             } else if (w != u) {
-
+                //排除a-b-(重新返回)-a
+                hasCycle = true;
             }
         }
     }
 
     public boolean hasCycle(){
-        return hasCycle == true;
+        return hasCycle;
     }
 }
