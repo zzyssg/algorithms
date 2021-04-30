@@ -13,7 +13,6 @@ public class SymbolGraph {
     private Graph G;
 
     public SymbolGraph(String stream, String sp) {
-
         st = new ST<>();
         //第一遍，构造索引  符号名--索引
         In in = new In(stream);
@@ -32,7 +31,30 @@ public class SymbolGraph {
         }
 
         //第二遍，构造图
+        G = new Graph(st.size());
+        in = new In(stream);
+        while (in.hasNextLine()) {
+            String[] points = in.readLine().split(sp);
+            int v = st.get(points[0]);
+            for (int i = 1; i < points.length; i++) {
+                G.addEdge(v, st.get(points[i]));
+            }
+        }
+    }
 
+    public boolean contains(String s) {
+        return st.contains(s);
+    }
 
+    public String name(int index) {
+        return keys[index];
+    }
+
+    public int index(String name){
+        return st.get(name);
+    }
+
+    public Graph G() {
+        return G;
     }
 }

@@ -38,9 +38,8 @@ public class Graph {
         }
 
     }
-
     //添加边
-    private void addEdge(int v, int w) {
+    public void addEdge(int v, int w) {
         //w添加到v，v添加到w的链表中
         adj[v].add(w);
         adj[w].add(v);
@@ -61,5 +60,6 @@ public class Graph {
     public Iterable<Integer> adj(int v){
         return adj[v];
     }
+
 
 }
