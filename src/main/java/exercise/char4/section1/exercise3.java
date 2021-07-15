@@ -1,9 +1,7 @@
 package exercise.char4.section1;
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Stack;
 import template.char1.section4.Bag;
-import template.char4.section1.Graph;
 
 /**
  * 为Graph添加一个复制构造函数Graph(Graph G)，它接受一幅图G然后创建并初始化这幅图的一个副本。
@@ -31,6 +29,7 @@ public class exercise3 {
                 adj[v] = new Bag<Integer>();
             }
         }
+
 
         public Graph(In in) {
             //读取顶点数目，并且初始化图

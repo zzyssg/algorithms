@@ -10,7 +10,7 @@ public class TwoColor {
     private boolean[] color;
     private boolean isTwoColor = true;
 
-    public TwoColor(Graph G) {
+    public TwoColor(Graph_Copy G) {
         marked = new boolean[G.V()];
         color = new boolean[G.V()];
         for (int s = 0; s < G.V(); s++) {
@@ -21,7 +21,7 @@ public class TwoColor {
 
     }
 
-    private void dfs(Graph G, int v) {
+    private void dfs(Graph_Copy G, int v) {
         marked[v] = true;
         for (int w : G.adj(v)) {
             if (!marked[w]) {

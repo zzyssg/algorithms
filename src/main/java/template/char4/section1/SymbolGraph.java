@@ -10,7 +10,7 @@ import edu.princeton.cs.algs4.ST;
 public class SymbolGraph {
     private ST<String, Integer> st;
     private String[] keys;
-    private Graph G;
+    private Graph_Copy G;
 
     public SymbolGraph(String stream, String sp) {
         st = new ST<>();
@@ -31,7 +31,7 @@ public class SymbolGraph {
         }
 
         //第二遍，构造图
-        G = new Graph(st.size());
+        G = new Graph_Copy(st.size());
         in = new In(stream);
         while (in.hasNextLine()) {
             String[] points = in.readLine().split(sp);
@@ -54,7 +54,7 @@ public class SymbolGraph {
         return st.get(name);
     }
 
-    public Graph G() {
+    public Graph_Copy G() {
         return G;
     }
 }

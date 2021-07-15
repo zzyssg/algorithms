@@ -9,7 +9,7 @@ public class Cycle {
     private boolean[] marked;
     private boolean hasCycle;
 
-    public Cycle(Graph G) {
+    public Cycle(Graph_Copy G) {
         marked = new boolean[G.V()];
         for (int s = 0; s < G.V(); s++) {
             if (!marked[s]) {
@@ -18,7 +18,7 @@ public class Cycle {
         }
     }
 
-    private void dfs(Graph G, int v, int u) {
+    private void dfs(Graph_Copy G, int v, int u) {
         marked[v] = true;
         for (int w : G.adj(v)) {
             if (!marked[w]) {

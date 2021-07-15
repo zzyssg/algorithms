@@ -13,7 +13,7 @@ public class CC {
     //有几个连通分量
     private int count;
 
-    public CC(Graph G) {
+    public CC(Graph_Copy G) {
         isMarked = new boolean[G.V()];
         for (int i = 0; i < G.V(); i++) {
             if (!isMarked[i]) {
@@ -24,7 +24,7 @@ public class CC {
     }
 
     //以i为根节点进行访问并标记
-    private void dfs(int i, Graph G) {
+    private void dfs(int i, Graph_Copy G) {
         isMarked[i] = true;
         id[i] = count;
         for (int j : G.adj(i)) {

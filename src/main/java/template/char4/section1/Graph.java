@@ -1,65 +1,91 @@
 package template.char4.section1;
 
+import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.In;
-import template.char1.section4.Bag;
 
 /**
- * 顶点索引的整形链表数组
  * @author ZZY
- * @date 2021/4/20 10:58
+ * @date 2021/7/14 23:16
+ * 点关注个数，边关注点数
  */
 public class Graph {
-    //顶点数目
-    private final int V;
-    //边的数目
+    //顶点的个数
+    private int V;
+    //边的个数
     private int E;
-    //邻接表
+    //邻接表数组实现图——每一个是一个Bag类型的数据，存放对应顶点的临接点
     private Bag<Integer>[] adj;
-    public Graph(int V){
-        this.V = V;
-        this.E = 0;
-        //创建邻接表
-        adj = (Bag<Integer>[]) new Bag[V];
-        for (int v = 0; v < V; v++) {
-            adj[v] = new Bag<Integer>();
+
+    //构造方法1——输入点数
+    public Graph(int v) {
+        this.V = v;
+        adj = (Bag<Integer>[]) new Bag[v];
+        for (int i = 0; i < v; i++) {
+            //初始化
+            adj[i] = new Bag<Integer>();
         }
     }
 
+    //构造方法2——从输入中获取图的数据
     public Graph(In in) {
-        //读取顶点数目，并且初始化图
+        //通过点数构造图
         this(in.readInt());
-        //读取边
-        this.E = in.readInt();
+        //读取边数
+//        this.E = in.readInt();
+        int E = in.readInt();
         for (int i = 0; i < E; i++) {
-            //添加一条边
-            int v = in.readInt();//一个顶点
-            int w = in.readInt();//另一个顶点
+            //读取边，添加边
+            int v = in.readInt();
+            int w = in.readInt();
             addEdge(v, w);
         }
 
     }
-    //添加边
+
+    //获取顶点数
+    public int getV() {
+        return V;
+    }
+
+    //获取边数
+    public int getE() {
+        return E;
+    }
+
+    //获取某点的临接点
+    public Iterable<Integer> adj(int v) {
+        return adj[v];
+    }
+
+    //平均边数
+    public int avgEge() {
+        return 2 * E / V;
+    }
+
+    //自环的个数
+    public int numOfSelfLoops() {
+        int count = 0;
+        for (int v = 0; v < V; v++) {
+            for (int w : adj(v)) {
+                if (v == w) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+
+    //增加边
     public void addEdge(int v, int w) {
-        //w添加到v，v添加到w的链表中
         adj[v].add(w);
         adj[w].add(v);
         E++;
     }
 
-    //返回顶点数目
-    public int V(){
-        return V;
-    }
+//    //返回某个点的所有临接点
+//    public Iterable<Integer>
 
-    //返回边的数目
-    public int E(){
-        return E;
-    }
-
-    //返回某个点的邻接表
-    public Iterable<Integer> adj(int v){
-        return adj[v];
-    }
-
+    //邻接表的toString
 
 }
