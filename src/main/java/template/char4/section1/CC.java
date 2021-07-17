@@ -1,48 +1,45 @@
 package template.char4.section1;
 
 /**
- * 连通分量
  * @author ZZY
- * @date 2021/4/21 11:32
+ * @date 2021/7/17 22:21
+ * @description 连通性
  */
 public class CC {
-    //是否访问过
-    private boolean[] isMarked;
-    //属于哪个连通分量
+    private boolean[] marked;
     private int[] id;
-    //有几个连通分量
+//    连通分量个数
     private int count;
 
-    public CC(Graph_Copy G) {
-        isMarked = new boolean[G.V()];
-        for (int i = 0; i < G.V(); i++) {
-            if (!isMarked[i]) {
-                dfs(i, G);
+    public CC(Graph G) {
+        marked = new boolean[G.V()];
+        for (int s = 0; s < G.V(); s++) {
+            if (!marked[s]) {
+                dfs(G, s);
                 count++;
             }
         }
     }
 
-    //以i为根节点进行访问并标记
-    private void dfs(int i, Graph_Copy G) {
-        isMarked[i] = true;
-        id[i] = count;
-        for (int j : G.adj(i)) {
-            dfs(j, G);
+    private void dfs(Graph G, int v) {
+        marked[v] = true;
+        id[v] = count;
+        for (int w : G.adj(v)) {
+            if (!marked[w]) {
+                dfs(G, w);
+            }
         }
-    }
-
-    //两个点是否连通 == 两个点是否在同一个组里
-    public boolean connected(int v, int w) {
-        return id[v] == id[w];
     }
 
     public int id(int v) {
         return id[v];
     }
 
-    //有几个连通分量
-    public int count(){
+    public int count() {
         return count;
+    }
+
+    public boolean connected(int v, int w) {
+        return id[v] == id[w];
     }
 }

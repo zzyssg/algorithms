@@ -5,56 +5,60 @@ import edu.princeton.cs.algs4.ST;
 
 /**
  * @author ZZY
- * @date 2021/4/29 16:51
+ * @date 2021/7/17 19:41
+ * @description 脱离顶点必须是整数的限制
  */
 public class SymbolGraph {
+//    private boolean[] marked;
     private ST<String, Integer> st;
     private String[] keys;
-    private Graph_Copy G;
+    private Graph G;
 
-    public SymbolGraph(String stream, String sp) {
+    public SymbolGraph(String filepath, String sp) {
+//        第一次读取——创建正向索引st
+        In in = new In(filepath);
         st = new ST<>();
-        //第一遍，构造索引  符号名--索引
-        In in = new In(stream);
         while (in.hasNextLine()) {
-            String[] strings = in.readLine().split(sp);
-            for (int i = 0; i < strings.length; i++) {
-                if (!st.contains(strings[i])) {
-                    st.put(strings[i], st.size());
+            String[] a = in.readLine().split(sp);
+            for (String s : a) {
+//                去重
+                if (!st.contains(s)) {
+                    st.put(s, st.size());
                 }
             }
         }
-        //构造索引--符号名
-        keys = new String[st.size()];
-        for (String s : st.keys()) {
-            keys[st.get(s)] = s;
+//        创建图，但是此时还【未添加边】
+        G = new Graph(st.size());
+        for (String name : st.keys()) {
+            keys[st.get(name)] = name;
         }
-
-        //第二遍，构造图
-        G = new Graph_Copy(st.size());
-        in = new In(stream);
+//        第二次读取——创建图G、反向索引keys
+        in = new In(filepath);
         while (in.hasNextLine()) {
-            String[] points = in.readLine().split(sp);
-            int v = st.get(points[0]);
-            for (int i = 1; i < points.length; i++) {
-                G.addEdge(v, st.get(points[i]));
+            String[] a = in.readLine().split(sp);
+//            第一个顶点与同行其他顶点组成边;并且使用新的索引
+            int v = st.get(a[0]);
+            for (int w = 0; w < a.length; w++) {
+//                使用新的索引
+                G.addEdge(v, st.get(a[w]));
             }
         }
     }
 
-    public boolean contains(String s) {
-        return st.contains(s);
+    public String name(int v) {
+        return keys[v];
     }
 
-    public String name(int index) {
-        return keys[index];
+    public boolean contains(String name) {
+        return st.contains(name);
     }
 
-    public int index(String name){
+    public int index(String name) {
         return st.get(name);
     }
 
-    public Graph_Copy G() {
+    public Graph G() {
         return G;
     }
+
 }
