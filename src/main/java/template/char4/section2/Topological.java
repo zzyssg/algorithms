@@ -21,7 +21,8 @@ public class Topological {
     public Iterable<Integer> order() {
         return order;
     }
-//是无环图吗
+
+    //是无环图吗
     public boolean isDAG() {
         return order != null;
     }

@@ -27,6 +27,7 @@ public class DepthFirstOrder {
 //        逆后序排序
         reversePost = new Stack<>();
 
+//        感染，确认连通分量
         for (int s = 0; s < digraph.V(); s++) {
             if (!marked[s]) {
                 dfs(digraph, s);
