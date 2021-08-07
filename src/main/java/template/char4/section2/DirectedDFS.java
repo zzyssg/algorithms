@@ -6,9 +6,10 @@ package template.char4.section2;
  * @description 单点可达性 + 多点可达性
  */
 public class DirectedDFS {
+
     private boolean[] marked;
 
-//    单点可达
+    //    单点可达
     public DirectedDFS(Digraph digraph, int s) {
         marked = new boolean[digraph.V()];
         dfs(digraph, s);
