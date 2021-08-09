@@ -50,5 +50,4 @@ public class Quick3string {
         a[j] = temp;
     }
 
-
 }
