@@ -12,6 +12,8 @@ import java.util.PriorityQueue;
  * @Description 霍夫曼压缩
  */
 public class Huffman {
+    //7位2进制数组合表示为128种可能——基本表
+    //8位二进制数组合表示为256——扩展表
     private static int R = 256;
 
     private static class Node implements Comparable<Node> {
@@ -52,12 +54,23 @@ public class Huffman {
         }
         //构造霍夫曼编码树
         Node root = buildTrie(freq);
-        //(递归的)构造编译表
+        //(递归的)构造编译表 —— ch 索引 编码字符串
+        String[] st = new String[R];
+        buildCode(root, st, "");
         //（递归的）打印解码用的单词查找树
         //打印字符总数
         //使用霍夫曼编码处理输入
 
 
+    }
+
+    //利用霍夫曼编码树（单词查找树）递归确定编译表——
+    private static void buildCode(Node node, String[] st, String s) {
+        if (node.isLeaf()) {
+            st[node.ch] = s;
+        }
+        buildCode(node.left, st, s + "0");
+        buildCode(node.right, st, s + "1");
     }
 
     //构造霍夫曼编码树
