@@ -1,6 +1,8 @@
 package template.char5.section5;
 
+import edu.princeton.cs.algs4.BinaryOut;
 import edu.princeton.cs.algs4.BinaryStdIn;
+import edu.princeton.cs.algs4.BinaryStdOut;
 import edu.princeton.cs.algs4.Picture;
 
 import java.util.PriorityQueue;
@@ -60,8 +62,17 @@ public class Huffman {
         //（递归的）打印解码用的单词查找树
         //打印字符总数
         //使用霍夫曼编码处理输入
-
-
+        for (int i = 0; i < input.length; i++) {
+            String code = st[input[i]];
+            for (int j = 0; j < code.length(); j++) {
+                if (code.charAt(j) == 1) {
+                    BinaryStdOut.write(true);
+                } else {
+                    BinaryStdOut.write(false);
+                }
+            }
+        }
+        BinaryStdOut.close();
     }
 
     //利用霍夫曼编码树（单词查找树）递归确定编译表——
